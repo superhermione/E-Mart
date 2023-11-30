@@ -18,8 +18,9 @@ const moment = require('moment');
 var exphbs = require('express-handlebars');     // Import express-handlebars
 app.engine('.hbs', engine({ // Create an instance of the handlebars engine to process templates
     extname: ".hbs",
+    // helper function to convert time format as "MM/DD/YYYY"
     helpers: {
-        formatDate: function (dateString) {   // function that converts to YYYY-MM-DD on client side
+        formatDate: function (dateString) {   
             return moment(dateString).format('MM/DD/YYYY');
         }
     }
