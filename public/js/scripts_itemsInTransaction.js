@@ -40,7 +40,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const deleteTransactionDetailBtns = document.querySelectorAll('.delete_transactionDetail_icon'); 
   
   deleteTransactionDetailBtns.forEach((btn) => {
+    console.log("Delete button found", btn); 
     btn.addEventListener('click', (event) => {
+        console.log("Delete button clicked", event.target);
       const isConfirmed = window.confirm(
         'Click the button to confirm this delete'
       );

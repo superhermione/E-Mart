@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
     deleteTransactionBtns.forEach((btn) => {
       btn.addEventListener('click', (event) => {
         const isConfirmed = window.confirm(
-          'Click the button to confirm this delete'
+          'Click the button to confirm this delete, all transaction details will also be deleted.'
         );
   
         if (isConfirmed) {

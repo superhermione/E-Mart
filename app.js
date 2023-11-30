@@ -46,6 +46,8 @@ app.get('/index', function(req, res)
         res.render('index');                
     });  
 
+
+// show categories
 app.get('/categories', function(req, res)                 // This is the basic syntax for what is called a 'route'
     {
         // Define our query
@@ -62,8 +64,9 @@ app.get('/categories', function(req, res)                 // This is the basic s
                 res.render('categories', { data: rows });
             }
         });                                                    
-    });       
-
+    });   
+    
+// show products
 app.get('/products', function(req, res)                 // This is the basic syntax for what is called a 'route'
     {
        // Define our query
@@ -100,7 +103,7 @@ app.get('/customers', function(req, res)  {               // This is the basic s
     });
 });
 
-    // show employees
+// show employees
 app.get('/employees', function(req, res) {
         // Define our query
         let queryEmployeeSelect = "SELECT employeeID, firstName, lastName, email, position, customerID FROM Employees;";
@@ -144,6 +147,7 @@ app.get('/transactions', function(req, res) {
         });
     });
 
+// show transaction detail
 app.get('/itemsInTransaction', function(req, res)                 // This is the basic syntax for what is called a 'route'
     {
         let query = `
@@ -202,10 +206,11 @@ app.post('/add-category', function(req, res) {
 app.post('/add-product', function(req, res) {
     let data = req.body;
     let categoryID = data['productCategoryID'] ? parseInt(data['productCategoryID'], 10) : null;
+    let unitPrice = parseFloat(data['productUnitPrice']);
     
     // Parameterized query to prevent SQL injection
     let queryProductsInsert = `INSERT INTO Products (productName, unitPrice, categoryID) VALUES (?, ?, ?);`;
-    let queryParams = [data['productProductName'], parseFloat(data['productUnitPrice']), categoryID];
+    let queryParams = [data['productProductName'], unitPrice, categoryID];
     
     db.pool.query(queryProductsInsert, queryParams, function(error, results, fields) {
         if (error) {
@@ -521,6 +526,10 @@ app.post('/update-transaction', function(req, res) {
     let purchaseDate = data['updatePurchaseDate'];
     let totalAmount = parseFloat(data['updateTotalAmount']);
 
+    if (isNaN(transactionID)) {
+        return res.status(400).send('Invalid transaction ID');
+    }
+
     let queryUpdateTransaction = `UPDATE Transactions SET purchaseDate = ?, totalAmount = ? WHERE transactionID = ?;`;
     let queryParams = [purchaseDate, totalAmount, transactionID];
 
@@ -540,10 +549,14 @@ app.post('/update-transactionDetail', function (req, res, next) {
     let data = req.body;
 
     let itemID = parseInt(data.updateItemID);
-    let productName = data.updateProductName; // Ensure this matches the name attribute in your form
+    let productName = data.updateProductName; 
     let quantity = parseInt(data.updateQuantity);
     let amount = parseFloat(data.updateAmount);
 
+    if (isNaN(itemID)) {
+        return res.status(400).send('Invalid item ID');
+    }
+    
     console.log("Received request to update item with ID:", itemID);
     console.log("Product Name to update:", productName);
     console.log("New Quantity:", quantity);
@@ -586,6 +599,7 @@ app.post('/update-transactionDetail', function (req, res, next) {
 
 /* =============================== DELETE ===============================*/
 
+// delete category
 app.delete('/delete-category/', function(req,res,next){
     let data = req.body;
     let categoryID = parseInt(data.categoryID); 
@@ -638,8 +652,6 @@ app.delete('/delete-customer', function(req, res, next){
         }
     });
 });
-
-
 
 // delete employee
 app.delete('/delete-employee', function(req, res, next){
