@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   
     // UPDATE
-    const updateEmployeeBtns = document.querySelectorAll('.edit_icon'); 
+    const updateEmployeeBtns = document.querySelectorAll('.edit_employee_icon'); 
     const updateEmployeeCancel = document.getElementById('update_employee_cancel');
     const updateEmployeeForm = document.getElementById('update_employee_form');
   

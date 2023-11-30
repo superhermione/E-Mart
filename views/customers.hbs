@@ -49,129 +49,104 @@
         </div>
       </nav>
     </header>
-<script src="js/scripts_employees.js"></script> 
+<script src="js/scripts_customers.js"></script> 
 
 
-<button id="insert_employee_btn">+ New Employee</button>
+<button id="insert_customer_btn">+ New Customer</button>
 
 <!-- INSERT -->
-<section id="insert_employee_form" class="hidden_form">
-    <h2>Add New Employee</h2>
-    <form action="/add-employee" method="POST">
-        <label for="employeeFirstName">First Name:</label>
+<section id="insert_customer_form" class="hidden_form">
+    <h2>Add New Customer</h2>
+    <form action="/add-customer" method="POST">
+        <label for="customerType">Customer Type:</label>
+        <select id="customerType" name="customerType" required>
+          <option value="Registered">Registered</option>
+          <option value="Guest">Guest</option>
+          <option value="Employee">Employee</option>
+        </select>
+        <label for="customerFirstName">First Name:</label>
         <input
         type="text"
-        id="employeeFirstName"
-        name="employeeFirstName"
+        id="customerFirstName"
+        name="customerFirstName"
         maxlength="225"
-        required
         />
-        <label for="employeeLastName">Last Name:</label>
+        <label for="customerLastName">Last Name:</label>
         <input
         type="text"
-        id="employeeLastName"
-        name="employeeLastName"
+        id="customerLastName"
+        name="customerLastName"
         maxlength="225"
-        required
         />
-        <label for="employeeEmail">Email:</label>
+        <label for="customerEmail">Email:</label>
         <input
         type="email"
-        id="employeeEmail"
-        name="employeeEmail"
+        id="customerEmail"
+        name="customerEmail"
         maxlength="225"
-        required
         />
-        <label for="employeePosition">Position:</label>
-        <input
-        type="text"
-        id="employeePosition"
-        name="employeePosition"
-        maxlength="225"
-        required
-        />
-        <label for="employeeCustomerID">Customer ID:</label>
-        <input
-        type="text"
-        id="employeeCustomerID"
-        name="employeeCustomerID"
-        maxlength="225"
-        placeholder="Enter customer ID if applicable"
-        />
+
         <button type="submit">Submit</button>
-        <button type="button" id="insert_employee_cancel">Cancel</button>
+        <button type="button" id="insert_customer_cancel">Cancel</button>
     </form>
 </section>
 
 <!-- UPDATE -->
-<section id="update_employee_form" class="hidden_form">
-    <h2>Update Employee</h2>
-    <form action="/update-employee" method="POST">
-      <label for="updateEmployeeID">ID:</label>
+<section id="update_customer_form" class="hidden_form">
+    <h2>Update Customer</h2>
+    <form action="/update-customer" method="POST">
+      <label for="updateCustomerID">ID:</label>
       <input
         type="text"
-        id="updateEmployeeID"
-        name="updateEmployeeID"
+        id="updateCustomerID"
+        name="updateCustomerID"
         readonly
       />
-      <label for="updateEmployeeFirstName">First Name:</label>
+      <label for="updateCustomerType">Customer Type:</label>
+        <select id="updateCustomerType" name="updateCustomerType" required>
+          <option value="Registered">Registered</option>
+          <option value="Guest">Guest</option>
+          <option value="Employee">Employee</option>
+        </select>
+      <label for="updateCustomerFirstName">First Name:</label>
      <input
         type="text"
-        id="updateEmployeeFirstName"
-        name="updateEmployeeFirstName"
+        id="updateCustomerFirstName"
+        name="updateCustomerFirstName"
         maxlength="225"
-        required
      />
-        <label for="updateEmployeeLastName">Last Name:</label>
+        <label for="updateCustomerLastName">Last Name:</label>
         <input
         type="text"
-        id="updateEmployeeLastName"
-        name="updateEmployeeLastName"
+        id="updateCustomerLastName"
+        name="updateCustomerLastName"
         maxlength="225"
-        required
      />
-        <label for="updateEmployeeEmail">Email:</label>
+        <label for="updateCustomerEmail">Email:</label>
         <input
         type="email"
-        id="updateEmployeeEmail"
-        name="updateEmployeeEmail"
+        id="updateCustomerEmail"
+        name="updateCustomerEmail"
         maxlength="225"
-        required
       />
-        <label for="updateEmployeePosition">Position:</label>
-          <input
-          type="text"
-          id="updateEmployeePosition"
-          name="updateEmployeePosition"
-          maxlength="225"
-          required
-        />
-        <label for="updateEmployeeCustomerID">Customer ID:</label>
-          <input
-          type="text"
-          id="updateEmployeeCustomerID"
-          name="updateEmployeeCustomerID"
-          maxlength="225"
-          placeholder="Enter customer ID if applicable"
-      />
+       
       <button type="submit">Update</button>
-      <button type="button" id="update_employee_cancel">Cancel</button>
+      <button type="button" id="update_customer_cancel">Cancel</button>
     </form>
   </section>
   
 <!-- SELECT -->
-<table id="employees-table">
+<table id="customers-table">
 
     <thead>
 
         {{!-- Table headers --}}
         <tr>
-            <th>Employee ID</th>
+            <th>Customer ID</th>
+            <th>Customer Type</th>
             <th>First Name</th>
             <th>Last Name</th>
             <th>Email</th>
-            <th>Position</th>
-            <th>Customer ID</th>
             <th>Edit</th>
             <th>Delete</th>
         </tr>
@@ -181,21 +156,19 @@
 
         {{#each data}}
         <tr 
-        data-value={{this.employeeID}} 
+        data-value={{this.customerID}} 
+        data-customer-type={{this.customerType}} 
         data-first-name="{{this.firstName}}" 
         data-last-name="{{this.lastName}}" 
         data-email={{this.email}}
-        data-position={{this.position}}
-        data-customerID={{this.customerID}}
         >
-            <td>{{this.employeeID}}</td>
+            <td>{{this.customerID}}</td>
+            <td>{{this.customerType}}</td>
             <td>{{this.firstName}}</td>
             <td>{{this.lastName}}</td>
             <td>{{this.email}}</td>
-            <td>{{this.position}}</td>
-            <td>{{this.customerID}}</td>
-            <td class="edit_employee_icon">✎</td>
-            <td class="delete_employee_icon">🗑</td>
+            <td class="edit_icon">✎</td>
+            <td class="delete_customer_icon">🗑</td>
         </tr>
         {{/each}}
     </tbody>
