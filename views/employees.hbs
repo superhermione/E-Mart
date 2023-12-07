@@ -83,13 +83,15 @@
         required
         />
         <label for="employeePosition">Position:</label>
-        <input
-        type="text"
-        id="employeePosition"
-        name="employeePosition"
-        maxlength="225"
-        required
-        />
+        {{!-- <input type="text" id="employeePosition" name="employeePosition" maxlength="225" required/> --}}
+        <select id="employeePosition" name="employeePosition" required>
+          <option value="Cashier">Cashier</option>
+          <option value="Organizer">Organizer</option>
+          <option value="Store Manager">Store Manager</option>
+          <option value="Sales Associate">Sales Associate</option>
+          <option value="Janitor">Janitor</option>
+        </select>
+
         <label for="employeeCustomerID">Customer ID:</label>
         <input
         type="text"
@@ -139,13 +141,15 @@
         required
       />
         <label for="updateEmployeePosition">Position:</label>
-          <input
-          type="text"
-          id="updateEmployeePosition"
-          name="updateEmployeePosition"
-          maxlength="225"
-          required
-        />
+          {{!--<input type="text" id="updateEmployeePosition" name="updateEmployeePosition" maxlength="225" required/>--}}
+          <select id="updateEmployeePosition" name="updateEmployeePosition" required>
+          <option value="Cashier">Cashier</option>
+          <option value="Organizer">Organizer</option>
+          <option value="Store Manager">Store Manager</option>
+          <option value="Sales Associate">Sales Associate</option>
+          <option value="Janitor">Janitor</option>
+        </select>
+
         <label for="updateEmployeeCustomerID">Customer ID:</label>
           <input
           type="text"

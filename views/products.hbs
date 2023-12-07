@@ -31,7 +31,7 @@
     <header data-bs-theme="dark">
       <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
-          <a class="navbar-brand" href="index">ExpressMart</a>
+          <a class="navbar-brand" href="index.html">ExpressMart</a>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
@@ -59,28 +59,23 @@
     <h2>Add New Product</h2>
     <form action="/add-product" method="POST">
         <label for="productProductName">Product Name:</label>
-        <input
-        type="text"
-        id="productProductName"
-        name="productProductName"
-        maxlength="225"
-        required
-        />
+        <input type="text" id="productProductName" name="productProductName" maxlength="225" required/>
         <label for="productUnitPrice">Unit Price:</label>
-        <input
-        type="number"
-        id="productUnitPrice"
-        name="productUnitPrice"
-        required
-        />
-        <label for="productCategoryID">Category ID:</label>
-        <input
+        <input type="number" id="productUnitPrice" name="productUnitPrice" min="0"  step="0.01" required/>
+        <label for="productCategoryID">Category Name:</label>
+        {{!-- <input
         type="text"
         id="productCategoryID"
         name="productCategoryID"
         maxlength="225"
         required
-        />
+        /> --}}
+        <select name="productCategoryID" id="productCategoryID">
+          <option value="">Select a category:</option>
+          {{#each Categories}}
+          <option value="{{this.categoryID}}">{{this.categoryName}}</option>
+          {{/each}}
+        </select>
       
         <button type="submit">Submit</button>
         <button type="button" id="insert_product_cancel">Cancel</button>
@@ -91,37 +86,30 @@
 <section id="update_product_form" class="hidden_form">
     <h2>Update Product</h2>
     <form action="/update-product" method="POST">
+
       <label for="updateProductID">ID:</label>
-      <input
-        type="text"
-        id="updateProductID"
-        name="updateProductID"
-        readonly
-      />
+      <input type="text" id="updateProductID" name="updateProductID"readonly/>
+
       <label for="updateProductProductName">Product Name:</label>
-     <input
-        type="text"
-        id="updateProductProductName"
-        name="updateProductProductName"
-        maxlength="225"
-        required
-     />
-        <label for="updateProductUnitPrice">Unit Price:</label>
-        <input
-        type="number"
-        id="updateProductUnitPrice"
-        name="updateProductUnitPrice"
-        required
-     />
+     <input type="text" id="updateProductProductName" name="updateProductProductName" maxlength="225" required/>
         
-        <label for="updateProductCategoryID">Category ID:</label>
-          <input
+      <label for="updateProductUnitPrice">Unit Price:</label>
+        <input type="number" id="updateProductUnitPrice" name="updateProductUnitPrice" min="0" step="0.01" required />
+        
+        <label for="updateProductCategoryID">Category Name:</label>
+          {{!-- <input
           type="text"
           id="updateProductCategoryID"
           name="updateProductCategoryID"
           maxlength="225"
           placeholder="Enter category ID if applicable"
-      />
+          /> --}}
+          <select name="updateProductCategoryID" id="updateProductCategoryID">
+            <option value="">Select a category:</option>
+            {{#each Categories}}
+            <option value="{{this.categoryID}}">{{this.categoryName}}</option>
+            {{/each}}
+          </select>
       <button type="submit">Update</button>
       <button type="button" id="update_product_cancel">Cancel</button>
     </form>
@@ -137,7 +125,7 @@
             <th>Product ID</th>
             <th>Product Name</th>
             <th>Unit Price</th>
-            <th>Category ID</th>
+            <th>Category Name</th>
             <th>Edit</th>
             <th>Delete</th>
         </tr>
@@ -150,12 +138,12 @@
         data-value={{this.productID}} 
         data-product-name="{{this.productName}}" 
         data-unit-price="{{this.unitPrice}}" 
-        data-categoryID={{this.categoryID}}
+        data-category-name={{this.categoryName}}
         >
             <td>{{this.productID}}</td>
             <td>{{this.productName}}</td>
-            <td>{{this.unitPrice}}</td>
-            <td>{{this.categoryID}}</td>
+            <td>${{this.unitPrice}}</td>
+            <td>{{this.categoryName}}</td>
             <td class="edit_icon">✎</td>
             <td class="delete_product_icon">🗑</td>
         </tr>

@@ -1,13 +1,11 @@
 // App.js
-// Jeon and Xinrui
-// This code is a modification from the Github template for CS340 repository
 
 /*
     SETUP
 */
 var express = require('express');   // We are using the express library for the web server
 var app     = express();            // We need to instantiate an express object to interact with the server in our code
-PORT        = 46857;                 // Set a port number at the top so it's easy to change in the future
+PORT        = 46686;                 // Set a port number at the top so it's easy to change in the future
 
 // Database
 var db = require('./database/db-connector')
@@ -46,8 +44,6 @@ app.get('/index', function(req, res)
         res.render('index');                
     });  
 
-
-// show categories
 app.get('/categories', function(req, res)                 // This is the basic syntax for what is called a 'route'
     {
         // Define our query
@@ -64,25 +60,37 @@ app.get('/categories', function(req, res)                 // This is the basic s
                 res.render('categories', { data: rows });
             }
         });                                                    
-    });   
-    
-// show products
+    });       
+
+// show products (updated to respond Peer review 5 for projecting Category Name rather than ID)
 app.get('/products', function(req, res)                 // This is the basic syntax for what is called a 'route'
     {
        // Define our query
-        let queryProductSelect = "SELECT productID, productName, unitPrice, categoryID FROM Products;";
-        
+        let queryProductSelect = `SELECT Products.productID, Products.productName, Products.unitPrice, 
+                                        Categories.categoryName as categoryName 
+                                        FROM Products 
+                                        LEFT JOIN Categories 
+                                        ON Products.categoryID = Categories.categoryID`;
+        let query2 = `SELECT * FROM Categories`;
+
         // Execute the query and render the template with the results
         db.pool.query(queryProductSelect, function(error, rows, fields) {
             if (error) {
-                // Handle the error
                 console.error(error);
-                res.sendStatus(500); // Internal Server Error
-            } else {
-                // Render the 'products' template with the data retrieved from the database
-                res.render('products', { data: rows });
+                return res.sendStatus(500); // Exit the function after sending a response
             }
-        });                                                 
+            let Products = rows;
+            db.pool.query(query2, (error, rows, fields) => {
+                if (error) {
+                    console.error(error);
+                    return res.sendStatus(500); // Exit the function after sending a response
+                }
+                
+                let Categories = rows;
+                return res.render('products', {data: Products, Categories: Categories});
+            });
+        });
+                                          
     });  
 
 // show customers
@@ -105,77 +113,113 @@ app.get('/customers', function(req, res)  {               // This is the basic s
 
 // show employees
 app.get('/employees', function(req, res) {
-        // Define our query
-        let queryEmployeeSelect = "SELECT employeeID, firstName, lastName, email, position, customerID FROM Employees;";
-        
-        // Execute the query and render the template with the results
-        db.pool.query(queryEmployeeSelect, function(error, rows, fields) {
-            if (error) {
-                // Handle the error
-                console.error(error);
-                res.sendStatus(500); // Internal Server Error
-            } else {
-                // Render the 'employees' template with the data retrieved from the database
-                res.render('employees', { data: rows });
-            }
-        });
+    // Define our query
+    let queryEmployeeSelect = "SELECT employeeID, firstName, lastName, email, position, customerID FROM Employees;";
+    
+    // Execute the query and render the template with the results
+    db.pool.query(queryEmployeeSelect, function(error, rows, fields) {
+        if (error) {
+            // Handle the error
+            console.error(error);
+            res.sendStatus(500); // Internal Server Error
+        } else {
+            // Render the 'employees' template with the data retrieved from the database
+            res.render('employees', { data: rows });
+        }
     });
-          
+}); 
 
 // show transaction
 app.get('/transactions', function(req, res) {
-        // This query joins the Transactions table with Customers and Employees to get emails instead of IDs
-        let query = `
-            SELECT 
-                Transactions.transactionID, 
-                Customers.email AS customerEmail, 
-                Employees.email AS employeeEmail, 
-                Transactions.purchaseDate, 
-                Transactions.totalAmount
-            FROM Transactions
-            LEFT JOIN Customers ON Transactions.customerID = Customers.customerID
-            LEFT JOIN Employees ON Transactions.employeeID = Employees.employeeID;`;
+    // This query joins the Transactions table with Customers and Employees to get emails instead of IDs
+    let query = `
+        SELECT 
+            Transactions.transactionID, 
+            Customers.email AS customerEmail, 
+            Employees.email AS employeeEmail, 
+            Transactions.purchaseDate, 
+            Transactions.totalAmount
+        FROM Transactions
+        LEFT JOIN Customers ON Transactions.customerID = Customers.customerID
+        LEFT JOIN Employees ON Transactions.employeeID = Employees.employeeID;`;
     
-        db.pool.query(query, function(error, rows, fields) {
-            if (error) {
-                console.error(error);
-                res.sendStatus(500); // Internal Server Error
-            } else {
-                // Render the 'transactions' template with the data retrieved from the database
-                res.render('transactions', { data: rows });
-            }
-        });
+    let query2 = `SELECT * FROM Customers`
+    let query3 = `SELECT * FROM Employees`  
+
+    db.pool.query(query, function(error, rows, fields) {
+        if (error) {
+            console.error(error);
+            res.sendStatus(500); // Internal Server Error
+        } else {
+            let Transactions = rows;
+            db.pool.query(query2, (error, rows, fields) => {
+            
+                // Save the Customers
+                let Customers = rows;
+
+                db.pool.query(query3, (error, rows, fields) => {
+            
+                    // Save the planets
+                    let Employees = rows;
+                    return res.render('transactions', {data: Transactions, Customers: Customers, Employees: Employees});
+                });
+            });
+        };
     });
+});
 
 // show transaction detail
 app.get('/itemsInTransaction', function(req, res)                 // This is the basic syntax for what is called a 'route'
-    {
-        let query = `
-            SELECT 
-                ItemsInTransaction.itemID, 
-                Transactions.transactionID AS transactionID, 
-                Products.productName AS productName, 
-                ItemsInTransaction.quantity, 
-                ItemsInTransaction.amount
-            FROM ItemsInTransaction
-            LEFT JOIN Transactions ON ItemsInTransaction.transactionID = Transactions.transactionID
-            LEFT JOIN Products ON ItemsInTransaction.productID = Products.productID
-            ;`;
-        db.pool.query(query, function(error, rows, fields) {
-            if (error) {
-                console.error(error);
-                res.sendStatus(500); // Internal Server Error
-            } else {
-                    // Render the 'transactions' template with the data retrieved from the database
-                res.render('itemsInTransaction', { data: rows });
-                }
-            });                                               
-    }); 
+{
+    let query = `
+        SELECT 
+            ItemsInTransaction.itemID, 
+            Transactions.transactionID AS transactionID, 
+            Products.productName AS productName, 
+            ItemsInTransaction.quantity, 
+            ItemsInTransaction.amount
+        FROM ItemsInTransaction
+        LEFT JOIN Transactions ON ItemsInTransaction.transactionID = Transactions.transactionID
+        LEFT JOIN Products ON ItemsInTransaction.productID = Products.productID
+        ;`;
+    // db.pool.query(query, function(error, rows, fields) {
+    //     if (error) {
+    //         console.error(error);
+    //         res.sendStatus(500); // Internal Server Error
+    //     } else {
+    //             // Render the 'transactions' template with the data retrieved from the database
+    //         res.render('itemsInTransaction', { data: rows });
+    //         }
+    //     });  
+    
+    let query2 = `SELECT * FROM Products`
+    let query3 = `SELECT * FROM Transactions`  
+
+    db.pool.query(query, function(error, rows, fields) {
+        if (error) {
+            console.error(error);
+            res.sendStatus(500); // Internal Server Error
+        } else {
+            let ItemsInTransaction = rows;
+            db.pool.query(query2, (error, rows, fields) => {
+            
+                // Save the Products
+                let Products = rows;
+
+                db.pool.query(query3, (error, rows, fields) => {
+            
+                    // Save the Transactions
+                    let Transactions = rows;
+                    return res.render('itemsInTransaction', {data: ItemsInTransaction, Products: Products, Transactions: Transactions});
+                });
+            });
+        };
+    });                                             
+}); 
 
 
 /* =============================== POST ===============================*/
 
-// add categories
 app.post('/add-category', function(req, res) {
     let data = req.body;
     
@@ -206,17 +250,15 @@ app.post('/add-category', function(req, res) {
 app.post('/add-product', function(req, res) {
     let data = req.body;
     let categoryID = data['productCategoryID'] ? parseInt(data['productCategoryID'], 10) : null;
-    let unitPrice = parseFloat(data['productUnitPrice']);
-    
     // Parameterized query to prevent SQL injection
     let queryProductsInsert = `INSERT INTO Products (productName, unitPrice, categoryID) VALUES (?, ?, ?);`;
-    let queryParams = [data['productProductName'], unitPrice, categoryID];
+    let queryParams = [data['productProductName'], data['productUnitPrice'], categoryID];
     
     db.pool.query(queryProductsInsert, queryParams, function(error, results, fields) {
         if (error) {
             // Send 400 Bad Request if there is an error
             console.error(error);
-            res.status(400).send('Error adding new employee');
+            res.status(400).send('Error adding new product');    // an update based on peer review 5
         } else {
             // If there is no error, redirect to the employees page to show the updated list
             res.redirect('/products');
@@ -517,7 +559,6 @@ app.post('/update-employee', function(req, res) {
     });
 });
 
-
 // update transaction
 app.post('/update-transaction', function(req, res) {
     let data = req.body;
@@ -599,7 +640,6 @@ app.post('/update-transactionDetail', function (req, res, next) {
 
 /* =============================== DELETE ===============================*/
 
-// delete category
 app.delete('/delete-category/', function(req,res,next){
     let data = req.body;
     let categoryID = parseInt(data.categoryID); 
@@ -662,6 +702,7 @@ app.delete('/delete-employee', function(req, res, next){
     // Run the query
     db.pool.query(queryDeleteEmployee, [employeeID], function(error, results, fields){
         if (error) {
+            // Log the error to the terminal so we know what went wrong, and send the visitor an HTTP response 400 indicating it was a bad request.
             console.log(error);
             res.sendStatus(400);
         } else {
@@ -704,6 +745,10 @@ app.delete('/delete-transactionDetail', function(req, res, next){
     });
 });
 
+
+/*
+    LISTENER
+*/
 app.listen(PORT, function(){            // This is the basic syntax for what is called the 'listener' which receives incoming requests on the specified PORT.
     console.log('Express started on http://localhost:' + PORT + '; press Ctrl-C to terminate.')
 });

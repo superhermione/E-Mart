@@ -62,15 +62,20 @@
         <input type="text" id="transactionID" name="transactionID" maxlength="225" required/>
     
     
-        <label for="productName">Item Name:</label>
-        <input type="text" id="productName" name="productName" maxlength="225" required/>
+        <label for="productName">Item Name:</label>  
+        <select name="productName" id="productName">
+            <option value="">Select the Product Name:</option>
+            {{#each Products}}
+            <option value="{{this.productName}}">{{this.productName}}</option>
+            {{/each}}
+          </select>
         
 
         <label for="quantity">Item Quantity:</label>
-        <input type="number" id="quantity" name="quantity" maxlength="225" required/>
+        <input type="number" id="quantity" name="quantity" maxlength="225" min="0" required/>
 
         <label for="amount">Amount:</label>
-        <input type="text" id="amount" name="amount" maxlength="225" required/>
+        <input type="number" id="amount" name="amount" maxlength="225" min="0" step = '0.01' required/>
         <button type="submit">Submit</button>
 
         <button type="button" id="insert_itemsInTransaction_cancel">Cancel</button>
@@ -96,10 +101,10 @@
 
       <!-- Employee ID (replaces 'Employee Email', now using employeeID instead of email) -->
      <label for="updateQuantity">Item Quantity:</label>
-        <input type="number" id="updateQuantity" name="updateQuantity" maxlength="225" required/>
+        <input type="number" id="updateQuantity" name="updateQuantity" maxlength="225" min="0" required/>
 
     <label for="updateAmount">Item Price:</label>
-    <input type="updateAmount" id="updateAmount" name="updateAmount" maxlength="225" required/>
+    <input type="number" id="updateAmount" name="updateAmount" maxlength="225" min="0" step = '0.01' required/>
 
       <!-- Update Button -->
       <button type="submit">Update</button>
@@ -139,7 +144,7 @@
             <td>{{this.transactionID}}</td>
             <td>{{this.productName}}</td>
             <td>{{this.quantity}}</td>
-            <td>{{this.amount}}</td>
+            <td>${{this.amount}}</td>
             <td class="edit_itemsInTransaction_icon">✎</td>
             <td class="delete_transactionDetail_icon">🗑</td>
         </tr>
