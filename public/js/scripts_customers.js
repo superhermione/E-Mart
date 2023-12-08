@@ -84,3 +84,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
   
+  // Set up default guest email and assist adding employee email in order to assist the inserting of transactions when the customer is a guest or an employee. 
+  document.addEventListener('DOMContentLoaded', function() {
+    var customerTypeSelect = document.getElementById('customerType');
+    var emailField = document.getElementById('customerEmail');
+    if (customerTypeSelect && emailField && employeeMessage) {
+      customerTypeSelect.addEventListener('change', function() {
+          if (this.value === 'Guest') {
+              emailField.value = 'guest@example.com'; // Set a default email for guest
+              employeeMessage.style.display = 'none'; // Hide the employee message
+          } else if (this.value === 'Employee') {
+              emailField.value = ''; 
+              employeeMessage.style.display = 'block'; // Show the employee message
+          } else {
+              emailField.value = ''; 
+              employeeMessage.style.display = 'none'; 
+          }
+      });
+    }
+});

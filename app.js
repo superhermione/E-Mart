@@ -269,6 +269,18 @@ app.post('/add-product', function(req, res) {
 // add customers
 app.post('/add-customer', function(req, res) {
     let data = req.body;
+
+    console.log("Received data:", data); // Log received data
+
+    console.log("Customer type is Guest:", data['customerType'] === 'Guest'); // Check customer type
+    console.log("Email is not provided:", !data['customerEmail']); // Check if email is provided
+
+    // An update: Check if customer is a guest and didn't provide an email
+    if (data['customerType'] === 'Guest' && data['customerEmail'] === 'guest@example.com') {
+        data['customerEmail'] = `guest_${Date.now()}@example.com`;
+        console.log("Generated Guest Email:", data['customerEmail']);
+    }
+
     // Parameterized query to prevent SQL injection
     let queryCustomersInsert = `INSERT INTO Customers (customerType, firstName, lastName, email) VALUES (?, ?, ?, ?);`;
     let queryParams = [data['customerType'], data['customerFirstName'], data['customerLastName'], data['customerEmail']];
@@ -564,6 +576,7 @@ app.post('/update-transaction', function(req, res) {
     let data = req.body;
 
     let transactionID = parseInt(data['updateTransactionID']);
+    let employeeID = parseInt(data['updateEmployeeID']);
     let purchaseDate = data['updatePurchaseDate'];
     let totalAmount = parseFloat(data['updateTotalAmount']);
 
@@ -571,8 +584,8 @@ app.post('/update-transaction', function(req, res) {
         return res.status(400).send('Invalid transaction ID');
     }
 
-    let queryUpdateTransaction = `UPDATE Transactions SET purchaseDate = ?, totalAmount = ? WHERE transactionID = ?;`;
-    let queryParams = [purchaseDate, totalAmount, transactionID];
+    let queryUpdateTransaction = `UPDATE Transactions SET employeeID = ?, purchaseDate = ?, totalAmount = ? WHERE transactionID = ?;`;
+    let queryParams = [employeeID, purchaseDate, totalAmount, transactionID];
 
     db.pool.query(queryUpdateTransaction, queryParams, function(updateError, updateResults) {
         if (updateError) {
@@ -583,6 +596,7 @@ app.post('/update-transaction', function(req, res) {
         console.log("Transaction updated successfully");
         res.redirect('/transactions');
     });
+
 });
 
 // update transaction detail

@@ -59,7 +59,12 @@
     <h2>Add New Transaction Detail</h2>
     <form action="/add-itemsInTransaction" method="POST">
         <label for="transactionID">Transaction ID:</label>
-        <input type="text" id="transactionID" name="transactionID" maxlength="225" required/>
+        <select name="transactionID" id="transactionID">
+            <option value="">Select a Transaction ID for details:</option>
+            {{#each Transactions}}
+            <option value="{{this.transactionID}}">{{this.transactionID}}</option>
+            {{/each}}
+          </select>
     
     
         <label for="productName">Item Name:</label>  
@@ -85,6 +90,9 @@
 <!-- UPDATE -->
 <section id="update_itemsInTransaction_form" class="hidden_form">
     <h2>Update Transaction Detail</h2>
+    <p style="font-size: 1em; color: #333; margin-bottom: 20px;">
+        You can access an UPDATE by clicking a specific "✎" from the below table.
+    </p>
     <form action="/update-transactionDetail" method="POST">
 
       <!-- Item ID (remains the same) -->
@@ -97,7 +105,8 @@
 
       <!-- Product Name selecting from the products -->
       <label for="updateProductName">Item Name:</label>
-      <input type="text" id="updateProductName" name="updateProductName" maxlength="225" required/>
+      <input type="text" id="updateProductName" name="updateProductName" maxlength="225" readonly/>
+     
 
       <!-- Employee ID (replaces 'Employee Email', now using employeeID instead of email) -->
      <label for="updateQuantity">Item Quantity:</label>
@@ -108,7 +117,7 @@
 
       <!-- Update Button -->
       <button type="submit">Update</button>
-      <button type="button" id="update_itemsInTansaction_cancel">Cancel</button>
+      <button type="button" id="update_itemsInTransaction_cancel">Cancel</button>
     </form>
 </section>
 

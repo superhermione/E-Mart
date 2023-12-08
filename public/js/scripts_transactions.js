@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let rowToUpdate = event.target.closest('tr');
         document.getElementById("updateTransactionID").value = rowToUpdate.getAttribute("data-value") 
         document.getElementById("updateCustomerEmail").value = rowToUpdate.getAttribute("data-customer-email") 
-        document.getElementById("updateEmployeeEmail").value = rowToUpdate.getAttribute("data-employee-email")
+        document.getElementById("updateEmployeeID").value = rowToUpdate.getAttribute("data-employee-id")
         document.getElementById("updatePurchaseDate").value = rowToUpdate.getAttribute("data-purchase-date") 
         document.getElementById("updateTotalAmount").value = rowToUpdate.getAttribute("data-total-amount") 
         

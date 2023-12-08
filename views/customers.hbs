@@ -58,12 +58,7 @@
 <section id="insert_customer_form" class="hidden_form">
     <h2>Add New Customer</h2>
     <form action="/add-customer" method="POST">
-        <label for="customerType">Customer Type:</label>
-        <select id="customerType" name="customerType" required>
-          <option value="Registered">Registered</option>
-          <option value="Guest">Guest</option>
-          <option value="Employee">Employee</option>
-        </select>
+
         <label for="customerFirstName">First Name:</label>
         <input
         type="text"
@@ -78,6 +73,15 @@
         name="customerLastName"
         maxlength="225"
         />
+
+        <label for="customerType">Customer Type:</label>
+        <select id="customerType" name="customerType" required>
+          <option value="Registered">Registered</option>
+          <option value="Guest">Guest</option>
+          <option value="Employee">Employee</option>
+        </select>
+        <p id="employeeMessage" style="display: none; color: #d61010;">Please check the employee table for the employee's email address.</p>
+
         <label for="customerEmail">Email:</label>
         <input
         type="email"
@@ -94,6 +98,10 @@
 <!-- UPDATE -->
 <section id="update_customer_form" class="hidden_form">
     <h2>Update Customer</h2>
+    <p style="font-size: 1em; color: #333; margin-bottom: 20px;">
+        You can access an UPDATE by clicking a specific "✎" from the below table.
+    </p>
+
     <form action="/update-customer" method="POST">
       <label for="updateCustomerID">ID:</label>
       <input
@@ -102,12 +110,7 @@
         name="updateCustomerID"
         readonly
       />
-      <label for="updateCustomerType">Customer Type:</label>
-        <select id="updateCustomerType" name="updateCustomerType" required>
-          <option value="Registered">Registered</option>
-          <option value="Guest">Guest</option>
-          <option value="Employee">Employee</option>
-        </select>
+
       <label for="updateCustomerFirstName">First Name:</label>
      <input
         type="text"
@@ -122,6 +125,14 @@
         name="updateCustomerLastName"
         maxlength="225"
      />
+
+      <label for="updateCustomerType">Customer Type:</label>
+        <select id="updateCustomerType" name="updateCustomerType" required>
+          <option value="Registered">Registered</option>
+          <option value="Guest">Guest</option>
+          <option value="Employee">Employee</option>
+        </select>
+
         <label for="updateCustomerEmail">Email:</label>
         <input
         type="email"
@@ -143,9 +154,9 @@
         {{!-- Table headers --}}
         <tr>
             <th>Customer ID</th>
-            <th>Customer Type</th>
             <th>First Name</th>
             <th>Last Name</th>
+            <th>Customer Type</th>
             <th>Email</th>
             <th>Edit</th>
             <th>Delete</th>
@@ -153,19 +164,19 @@
     </thead>
 
     <tbody>
-
+{{!--Update: shifted the table structure to show customer name and customer type --}}
         {{#each data}}
         <tr 
         data-value={{this.customerID}} 
-        data-customer-type={{this.customerType}} 
         data-first-name="{{this.firstName}}" 
         data-last-name="{{this.lastName}}" 
+        data-customer-type={{this.customerType}} 
         data-email={{this.email}}
         >
             <td>{{this.customerID}}</td>
-            <td>{{this.customerType}}</td>
             <td>{{this.firstName}}</td>
             <td>{{this.lastName}}</td>
+            <td>{{this.customerType}}</td>
             <td>{{this.email}}</td>
             <td class="edit_icon">✎</td>
             <td class="delete_customer_icon">🗑</td>
