@@ -384,7 +384,7 @@ app.post('/add-itemsInTransaction', function(req, res) {
     let transactionID = data['transactionID'];
     let productName = data['productName'];
     let quantity = parseInt(data['quantity']);
-    let amount = parseFloat(data['amount']);
+    //let amount = parseFloat(data['amount']);
 
     // Check if the transaction ID exists in the Transactions table
     db.pool.query('SELECT * FROM Transactions WHERE transactionID = ?', [transactionID], function(transactionCheckError, transactionCheckResults) {
@@ -407,8 +407,21 @@ app.post('/add-itemsInTransaction', function(req, res) {
             if (productCheckResults.length === 0) {
                 return res.status(400).send('Product Name not found');
             }
-            let productID = productCheckResults[0].productID;
 
+            // Calculate the amount
+            let productID = productCheckResults[0].productID;
+            let unitPrice = productCheckResults[0].unitPrice;
+            
+            console.log("Unit Price:", unitPrice);
+            console.log("Quantity:", quantity);
+
+            let amount = unitPrice * quantity;
+
+            // Check for NaN
+            if (isNaN(amount)) {
+                console.error("Calculated amount is NaN. Unit Price:", unitPrice, "Quantity:", quantity);
+                return res.status(400).send('Error calculating amount');
+            }
             // Insert data into ItemsInTransaction
             let queryItemsInTransactionInsert = `INSERT INTO ItemsInTransaction (transactionID, productID, quantity, amount) VALUES (?, ?, ?, ?);`;
             let queryParams = [transactionID, productID, quantity, amount];
@@ -606,7 +619,7 @@ app.post('/update-transactionDetail', function (req, res, next) {
     let itemID = parseInt(data.updateItemID);
     let productName = data.updateProductName; 
     let quantity = parseInt(data.updateQuantity);
-    let amount = parseFloat(data.updateAmount);
+    //let amount = parseFloat(data.updateAmount);
 
     if (isNaN(itemID)) {
         return res.status(400).send('Invalid item ID');
@@ -615,10 +628,9 @@ app.post('/update-transactionDetail', function (req, res, next) {
     console.log("Received request to update item with ID:", itemID);
     console.log("Product Name to update:", productName);
     console.log("New Quantity:", quantity);
-    console.log("New Amount:", amount);
 
     // First, get the productID for the given productName
-    db.pool.query('SELECT productID FROM Products WHERE productName = ?', [productName], function(productCheckError, productCheckResults) {
+    db.pool.query('SELECT productID, unitPrice FROM Products WHERE productName = ?', [productName], function(productCheckError, productCheckResults) {
         if (productCheckError) {
             console.error("Error checking product name:", productCheckError);
             return res.status(500).send('Server error occurred while checking product name.');
@@ -630,6 +642,22 @@ app.post('/update-transactionDetail', function (req, res, next) {
         }
 
         let productID = productCheckResults[0].productID;
+
+        // Calculate amount based on user update
+        let unitPrice = productCheckResults[0].unitPrice;
+        
+        if (typeof unitPrice !== 'number') {
+            console.error("Unit price is not a number for product:", productName, "Unit Price:", unitPrice);
+            return res.status(400).send('Unit price not found for product.');
+        }
+
+        let amount = unitPrice * quantity;
+
+        if (isNaN(amount)) {
+            console.error("Calculated amount is NaN. Unit Price:", unitPrice, "Quantity:", quantity);
+            return res.status(400).send('Error calculating amount');
+        }
+        console.log("Calculated Amount:", amount);
 
         // Now update the ItemsInTransaction with the obtained productID
         let queryUpdateItemsInTransaction = `
