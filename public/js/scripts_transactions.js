@@ -1,3 +1,11 @@
+//Authors: Su Youn Jeon and Xinrui Hou
+// Citation for the following code is modified from the template Github repository for CS 340:
+//https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main/ (Code & comments were copied)
+// Handle bar helper function is cited seperately from StackOverflow:
+// https://stackoverflow.com/questions/15411833/using-moment-js-to-convert-date-to-string-mm-dd-yyyy 
+// Date: Nov, 15th, 2023
+
+
 document.addEventListener('DOMContentLoaded', () => {
     // INSERT
     const insertTransactionBtn = document.getElementById('insert_transaction_btn');
