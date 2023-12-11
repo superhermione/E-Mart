@@ -22,4 +22,7 @@ ExpressMart is a grocery store with an annual revenue of $1.5 million and employ
 ## Schema
 <img src='./assets/ExpressMart.png'/>
 
-## 
+## Nevigation
+
+* **Homepage walkthrough** - 
+<img src='./assets/Homepage.gif'/>
