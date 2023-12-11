@@ -57,15 +57,24 @@
 <!-- INSERT -->
 <section id="insert_itemsInTransaction_form" class="hidden_form">
     <h2>Add New Transaction Detail</h2>
+    <p  style="color: #d61010;">Please check the Transactions table for the customer's email address and the matching purchase date for a specific transaction.</p>
     <form action="/add-itemsInTransaction" method="POST">
-        <label for="transactionID">Transaction ID:</label>
-        <select name="transactionID" id="transactionID">
-            <option value="">Select a Transaction ID for details:</option>
-            {{#each Transactions}}
-            <option value="{{this.transactionID}}">{{this.transactionID}}</option>
+        <label for="customerEmail">Customer Email:</label>
+        <select name="customerEmail" id="customerEmail">
+            <option value="">Access a transaction by selecting a customer email </option>
+            {{#each Customers}}
+            <option value="{{this.email}}">{{this.email}}</option>
             {{/each}}
           </select>
     
+        <label for="purchaseDate">Purchase Date:</label>
+        <select name="purchaseDate" id="purchaseDate">
+            <option value="">Target the transaction by selecting the purchase date </option>
+            {{#each Transactions}}
+            <option value="{{formatDate purchaseDate}}">{{formatDate this.purchaseDate}}</option>
+            {{/each}}
+          </select>
+
     
         <label for="productName">Item Name:</label>  
         <select name="productName" id="productName">
@@ -98,20 +107,20 @@
       <label for="updateItemID">Item ID:</label>
       <input type="text" id="updateItemID" name="updateItemID" readonly />
 
-      <!-- Transaction ID (remains the same) -->
-      <label for="updateTransactionID">Transaction ID:</label>
-      <input type="text" id="updateTransactionID" name="updateTransactionID" readonly />
-
       <!-- Product Name selecting from the products -->
       <label for="updateProductName">Item Name:</label>
-      <input type="text" id="updateProductName" name="updateProductName" maxlength="225" readonly/>
+      
+      <select name="updateProductName" id="updateProductName">
+            <option value="">Select the Product Name:</option>
+            {{#each Products}}
+            <option value="{{this.productName}}">{{this.productName}}</option>
+            {{/each}}
+          </select>
      
 
-      <!-- Employee ID (replaces 'Employee Email', now using employeeID instead of email) -->
+      <!-- Quantity  -->
      <label for="updateQuantity">Item Quantity:</label>
         <input type="number" id="updateQuantity" name="updateQuantity" maxlength="225" min="0" required/>
-
-    
 
       <!-- Update Button -->
       <button type="submit">Update</button>
@@ -128,7 +137,8 @@
         {{!-- Table headers --}}
         <tr>
             <th>Item ID</th>
-            <th>TransactionID</th>
+            <th>Customer Email</th>
+            <th>Purchase Date</th>
             <th>Item Name</th>
             <th>Item Quantity</th>
             <th>Amount</th>
@@ -142,13 +152,15 @@
         {{#each data}}
         <tr 
         data-value={{this.itemID}}
-        data-transaction-id ={{this.transactionID}}
+        data-customer-email ={{this.email}}
+        data-purchase-date ={{this.purchaseDate}}
         data-product-name={{this.productName}} 
         data-quantity="{{this.quantity}}" 
         data-amount={{this.amount}}
         >
             <td>{{this.itemID}}</td>
-            <td>{{this.transactionID}}</td>
+            <td>{{this.email}}</td>
+            <td>{{formatDate this.purchaseDate}}</td>
             <td>{{this.productName}}</td>
             <td>{{this.quantity}}</td>
             <td>${{this.amount}}</td>

@@ -16,10 +16,10 @@ const moment = require('moment');
 var exphbs = require('express-handlebars');     // Import express-handlebars
 app.engine('.hbs', engine({ // Create an instance of the handlebars engine to process templates
     extname: ".hbs",
-    // helper function to convert time format as "MM/DD/YYYY"
+    // helper function to convert time format as "YYYY-MM-DD"
     helpers: {
         formatDate: function (dateString) {   
-            return moment(dateString).format('MM/DD/YYYY');
+            return moment(dateString).format('YYYY-MM-DD');
         }
     }
 })); // Create an instance of the handlebars engine to process templates
@@ -169,53 +169,69 @@ app.get('/transactions', function(req, res) {
 });
 
 // show transaction detail
-app.get('/itemsInTransaction', function(req, res)                 // This is the basic syntax for what is called a 'route'
-{
-    let query = `
-        SELECT 
-            ItemsInTransaction.itemID, 
-            Transactions.transactionID AS transactionID, 
-            Products.productName AS productName, 
-            ItemsInTransaction.quantity, 
-            ItemsInTransaction.amount
-        FROM ItemsInTransaction
-        LEFT JOIN Transactions ON ItemsInTransaction.transactionID = Transactions.transactionID
-        LEFT JOIN Products ON ItemsInTransaction.productID = Products.productID
-        ;`;
-    // db.pool.query(query, function(error, rows, fields) {
-    //     if (error) {
-    //         console.error(error);
-    //         res.sendStatus(500); // Internal Server Error
-    //     } else {
-    //             // Render the 'transactions' template with the data retrieved from the database
-    //         res.render('itemsInTransaction', { data: rows });
-    //         }
-    //     });  
-    
-    let query2 = `SELECT * FROM Products`
-    let query3 = `SELECT * FROM Transactions`  
+app.get('/itemsInTransaction', function(req, res) {
+    // Query to fetch details of each item in a transaction
+    let queryItemsInTransaction = `
+    SELECT 
+        ItemsInTransaction.itemID, 
+        Transactions.transactionID, 
+        Customers.email,
+        Transactions.purchaseDate,
+        Products.productName, 
+        ItemsInTransaction.quantity, 
+        ItemsInTransaction.amount
+    FROM ItemsInTransaction
+    LEFT JOIN Transactions ON ItemsInTransaction.transactionID = Transactions.transactionID
+    LEFT JOIN Customers ON Transactions.customerID = Customers.customerID
+    LEFT JOIN Products ON ItemsInTransaction.productID = Products.productID;
 
-    db.pool.query(query, function(error, rows, fields) {
+    `;
+
+    // Query to fetch all products, transactions and customers
+    let queryAllProducts = `SELECT * FROM Products`;
+    let queryAllTransactions = `SELECT * FROM Transactions`;
+    let queryAllCustomers = `SELECT * FROM Customers`;
+
+    // Execute the first query
+    db.pool.query(queryItemsInTransaction, function(error, itemsInTransactionResults) {
         if (error) {
-            console.error(error);
-            res.sendStatus(500); // Internal Server Error
-        } else {
-            let ItemsInTransaction = rows;
-            db.pool.query(query2, (error, rows, fields) => {
-            
-                // Save the Products
-                let Products = rows;
+            console.error("Error fetching items in transaction:", error);
+            return res.sendStatus(500); // Internal Server Error
+        }
 
-                db.pool.query(query3, (error, rows, fields) => {
-            
-                    // Save the Transactions
-                    let Transactions = rows;
-                    return res.render('itemsInTransaction', {data: ItemsInTransaction, Products: Products, Transactions: Transactions});
+        // Execute the second query
+        db.pool.query(queryAllProducts, function(error, productsResults) {
+            if (error) {
+                console.error("Error fetching products:", error);
+                return res.sendStatus(500); // Internal Server Error
+            }
+
+            // Execute the third query
+            db.pool.query(queryAllTransactions, function(error, transactionsResults) {
+                if (error) {
+                    console.error("Error fetching transactions:", error);
+                    return res.sendStatus(500); // Internal Server Error
+                }
+
+                // Execute the fourth query
+                db.pool.query(queryAllCustomers, function(error, customersResults) {
+                    if (error) {
+                        console.error("Error fetching customers:", error);
+                        return res.sendStatus(500);
+                    }
+
+                    // Render the page with the fetched data
+                     res.render('itemsInTransaction', {
+                        data: itemsInTransactionResults,
+                        Products: productsResults,
+                        Transactions: transactionsResults,
+                        Customers: customersResults
+                    });
                 });
             });
-        };
-    });                                             
-}); 
+        });
+    });
+});
 
 
 /* =============================== POST ===============================*/
@@ -381,47 +397,45 @@ app.post('/add-itemsInTransaction', function(req, res) {
 
     console.log("Received items in transaction data:", data);
 
-    let transactionID = data['transactionID'];
+    let customerEmail = data['customerEmail'];
+    let purchaseDate = data['purchaseDate'];
     let productName = data['productName'];
     let quantity = parseInt(data['quantity']);
     //let amount = parseFloat(data['amount']);
 
-    // Check if the transaction ID exists in the Transactions table
-    db.pool.query('SELECT * FROM Transactions WHERE transactionID = ?', [transactionID], function(transactionCheckError, transactionCheckResults) {
-        if (transactionCheckError) {
-            console.error("Transaction check error:", transactionCheckError);
-            return res.status(500).send('Error checking transaction ID');
+    console.log("Searching for Transaction with Email:", customerEmail, "and Date:", purchaseDate);
+    // Find the transactionID based on customerEmail and purchaseDate
+    db.pool.query(`SELECT transactionID FROM Transactions 
+                        INNER JOIN Customers 
+                        ON Transactions.customerID = Customers.customerID 
+                        WHERE Customers.email = ? 
+                        AND Transactions.purchaseDate = ?`, 
+                [customerEmail, purchaseDate], function(transCheckError, transCheckResults) {
+
+        console.log("Query Results:", transCheckResults);
+        if (transCheckError || transCheckResults.length === 0) {
+            console.error("Error finding transaction:", transCheckError);
+            return res.status(400).send('Transaction not found');
         }
 
-        if (transactionCheckResults.length === 0) {
-            return res.status(400).send('Transaction ID not found');
-        }
+        let transactionID = transCheckResults[0].transactionID;
 
-        // Check if the product ID exists in the Products table
+        // Fetch product details
         db.pool.query('SELECT * FROM Products WHERE productName = ?', [productName], function(productCheckError, productCheckResults) {
-            if (productCheckError) {
+            if (productCheckError || productCheckResults.length === 0) {
                 console.error("Product check error:", productCheckError);
-                return res.status(500).send('Error checking product Name');
+                return res.status(400).send('Product not found');
             }
 
-            if (productCheckResults.length === 0) {
-                return res.status(400).send('Product Name not found');
-            }
-
-            // Calculate the amount
             let productID = productCheckResults[0].productID;
             let unitPrice = productCheckResults[0].unitPrice;
-            
-            console.log("Unit Price:", unitPrice);
-            console.log("Quantity:", quantity);
-
             let amount = unitPrice * quantity;
 
-            // Check for NaN
             if (isNaN(amount)) {
                 console.error("Calculated amount is NaN. Unit Price:", unitPrice, "Quantity:", quantity);
                 return res.status(400).send('Error calculating amount');
             }
+
             // Insert data into ItemsInTransaction
             let queryItemsInTransactionInsert = `INSERT INTO ItemsInTransaction (transactionID, productID, quantity, amount) VALUES (?, ?, ?, ?);`;
             let queryParams = [transactionID, productID, quantity, amount];
@@ -432,8 +446,7 @@ app.post('/add-itemsInTransaction', function(req, res) {
                     return res.status(400).send('Error adding new item in transaction');
                 }
 
-                console.log("Item in transaction inserted successfully");
-                res.redirect('/itemsInTransaction'); // Adjust the redirect as needed
+                res.redirect('/itemsInTransaction');
             });
         });
     });
@@ -626,7 +639,7 @@ app.post('/update-transactionDetail', function (req, res, next) {
     }
     
     console.log("Received request to update item with ID:", itemID);
-    console.log("Product Name to update:", productName);
+    console.log("Product Name to update:", `"${productName}"`);
     console.log("New Quantity:", quantity);
 
     // First, get the productID for the given productName
