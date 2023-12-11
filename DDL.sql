@@ -1,6 +1,11 @@
 /*------------------------------
     Team 110
     Su youn Jeon, Xinrui Hou
+    Citation for the following DDL:
+    Date: 11/01/2023
+    Modified and customized based on activity-m2.sql from Activity 1
+    Source URL: https://canvas.oregonstate.edu/courses/1933532/pages/activity-1-creating-a-customer-object-table
+
 ------------------------------*/
 
 -- Drops all tables if it exists
@@ -68,7 +73,7 @@ create table ItemsInTransaction (
     productID int not null,
     quantity int not null,
     amount decimal(10, 2) not null ,
-	foreign key (transactionID) references Transactions(transactionID) on delete set null,
+	foreign key (transactionID) references Transactions(transactionID) on delete CASCADE,
 	foreign key (productID) references Products(productID) on delete set null
 );
 

@@ -1,7 +1,12 @@
--- These are some Database Manipulation queries for a partially implemented Project Website 
--- using the bsg database.
--- Your submission should contain ALL the queries required to implement ALL the
--- functionalities listed in the Project Specs.
+/*------------------------------
+    Team 110
+    Su youn Jeon, Xinrui Hou
+    Citation for the following DDL:
+    Date: 11/01/2023
+    Modified and customized based on sample_data_manipulation_queries.sql from Exploration - Database Application Design
+    Source URL: https://canvas.oregonstate.edu/courses/1933532/pages/exploration-database-application-design?module_item_id=23359467
+
+------------------------------*/ 
 
 
 --------------------SELECT - Browse queries---------------------------
