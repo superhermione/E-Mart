@@ -44,15 +44,20 @@ ExpressMart is a grocery store with an annual revenue of $1.5 million and employ
 <img src='./assets/customers.gif'/>
 
 * **Employees page walkthrough** - users are able to conduct CRUD (create, read, update and delete) operations with the employees table. Users will leave a blank if the employee is not a customer. All data are altered in Maria Database simultaneously.
-<img src='./assets/employeess.gif'/>
+<img src='./assets/employees.gif'/>
  
-* **Transactions page walkthrough** - users are able to conduct CRUD (create, read, update and delete) operations with the transactions table. Users are able to target a transaction by fetching customer emails and transaction date. All data are altered in Maria Database simultaneously. On our UI, no foreign key are requested from the user.
+* **Transactions page walkthrough** - users are able to conduct CRUD (create, read, update and delete) operations with the transactions table. Users are able to create a transaction by fetching customer emails and employee emails. All data are altered in Maria Database simultaneously. On our UI, no foreign keys are requested from the user.
 <img src='./assets/transactions.gif'/>
+
+* **Transaction Details page walkthrough** - users are able to conduct CRUD (create, read, update and delete) operations with the transaction details table. Users are able to target a transaction by fetching customer emails and transaction date. All data are altered in Maria Database simultaneously. On our UI, no foreign key are requested from the user.
+<img src='./assets/transactionDetails.gif'/>
  
 ## Citation
  
 - The code structure is derived from the [Node.js Starter Guide](https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main/) provided by CS340 at Oregon State University. Code and comments have been adapted from this repository.
  
  
-- The conversion of date to string format "MM/dd/yyyy" is based on a solution found on Stack Overflow by user user3364059 and edited by user [NXT](https://stackoverflow.com/users/1554649/nxt). The original answer can be found [here](https://stackoverflow.com/questions/15411833/using-moment-js-to-convert-date-to-string-mm-dd-yyyy).
+- The conversion of date to string format "yyyy-mm-dd" is based on a solution found on Stack Overflow by user user3364059 and edited by user [NXT](https://stackoverflow.com/users/1554649/nxt). The original answer can be found [here](https://stackoverflow.com/questions/15411833/using-moment-js-to-convert-date-to-string-mm-dd-yyyy).
+
+- All walkthroughs are created by https://gifcap.dev/ 
  
