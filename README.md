@@ -40,9 +40,14 @@ ExpressMart is a grocery store with an annual revenue of $1.5 million and employ
 * **Categories page walkthrough** - users are able to conduct CRUD (create, read, update and delete) operations with the categories table. All data are altered in Maria Database simultaneously.
 <img src='./assets/categories.gif'/>
  
-* **Customers page walkthrough** - users are able to conduct CRUD (create, read, update and delete) operations with the customers table. For customer type attribute, the users are able to choose among three types in which a promopt messages are showing to assist the user input. All data are altered in Maria Database simultaneously.
+* **Customers page walkthrough** - users are able to conduct CRUD (create, read, update and delete) operations with the customers table. For customer type attribute, the users are able to choose among three types in which promopt messages are showing to assist the user input. All data are altered in Maria Database simultaneously.
 <img src='./assets/customers.gif'/>
+
+* **Employees page walkthrough** - users are able to conduct CRUD (create, read, update and delete) operations with the employees table. Users will leave a blank if the employee is not a customer. All data are altered in Maria Database simultaneously.
+<img src='./assets/employeess.gif'/>
  
+* **Transactions page walkthrough** - users are able to conduct CRUD (create, read, update and delete) operations with the transactions table. Users are able to target a transaction by fetching customer emails and transaction date. All data are altered in Maria Database simultaneously. On our UI, no foreign key are requested from the user.
+<img src='./assets/transactions.gif'/>
  
 ## Citation
  
