@@ -51,6 +51,9 @@ ExpressMart is a grocery store with an annual revenue of $1.5 million and employ
 
 * **Transaction Details page walkthrough** - users are able to conduct CRUD (create, read, update and delete) operations with the transaction details table. Users are able to target a transaction by fetching customer emails and transaction date. All data are altered in Maria Database simultaneously. On our UI, no foreign key are requested from the user.
 <img src='./assets/transactionDetails.gif'/>
+
+* **Maria Database walkthrough** - This database was designed and normalized on the first sprint using mysql on Maria Database through a server. All pages' CRUDs interact with this databse through our server code in app.js, frontend implementations in handlebar files as well as backend js files. 
+<img src='./assets/database.gif'/>
  
 ## Citation
  
