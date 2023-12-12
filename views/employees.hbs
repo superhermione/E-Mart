@@ -65,6 +65,7 @@
 <!-- INSERT -->
 <section id="insert_employee_form" class="hidden_form">
     <h2>Add New Employee</h2>
+    <p style="color: #d61010;">When enter customer type, please input 'Employee' if applicable, otherwise, leave it blank<p>
     <form action="/add-employee" method="POST">
         <label for="employeeFirstName">First Name:</label>
         <input
@@ -100,14 +101,9 @@
           <option value="Janitor">Janitor</option>
         </select>
 
-        <label for="employeeCustomerID">Customer ID:</label>
-        <input
-        type="text"
-        id="employeeCustomerID"
-        name="employeeCustomerID"
-        maxlength="225"
-        placeholder="Enter customer ID if applicable"
-        />
+        <label for="employeeCustomerType">Customer Type:</label>
+        <input type="text" id="employeeCustomerType" name="employeeCustomerType" maxlength="225" placeholder="If so, input 'Employee'"/>
+        
         <button type="submit">Submit</button>
         <button type="button" id="insert_employee_cancel">Cancel</button>
     </form>
@@ -162,14 +158,9 @@
           <option value="Janitor">Janitor</option>
         </select>
 
-        <label for="updateEmployeeCustomerID">Customer ID:</label>
-          <input
-          type="text"
-          id="updateEmployeeCustomerID"
-          name="updateEmployeeCustomerID"
-          maxlength="225"
-          placeholder="Enter customer ID if applicable"
-      />
+        <label for="updateEmployeeCustomerType">Customer type:</label>
+        <input type="text" id="updateEmployeeCustomerType" name="updateEmployeeCustomerType" maxlength="225" readonly/>
+
       <button type="submit">Update</button>
       <button type="button" id="update_employee_cancel">Cancel</button>
     </form>
@@ -187,7 +178,7 @@
             <th>Last Name</th>
             <th>Email</th>
             <th>Position</th>
-            <th>Customer ID</th>
+            <th>Customer Type</th>
             <th>Edit</th>
             <th>Delete</th>
         </tr>
@@ -202,14 +193,14 @@
         data-last-name="{{this.lastName}}" 
         data-email={{this.email}}
         data-position={{this.position}}
-        data-customerID={{this.customerID}}
+        data-customer-type={{this.customerType}}
         >
             <td>{{this.employeeID}}</td>
             <td>{{this.firstName}}</td>
             <td>{{this.lastName}}</td>
             <td>{{this.email}}</td>
             <td>{{this.position}}</td>
-            <td>{{this.customerID}}</td>
+            <td>{{this.customerType}}</td>
             <td class="edit_employee_icon">✎</td>
             <td class="delete_employee_icon">🗑</td>
         </tr>

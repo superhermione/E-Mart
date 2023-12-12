@@ -121,20 +121,31 @@ app.get('/customers', function(req, res)  {               // This is the basic s
 // show employees
 app.get('/employees', function(req, res) {
     // Define our query
-    let queryEmployeeSelect = "SELECT employeeID, firstName, lastName, email, position, customerID FROM Employees;";
+    let queryEmployeeSelect = `
+        SELECT 
+            Employees.employeeID, 
+            Employees.firstName, 
+            Employees.lastName, 
+            Employees.email, 
+            Employees.position, 
+            Customers.customerType
+        FROM Employees
+        LEFT JOIN Customers ON Employees.customerID = Customers.customerID;
+    `;
     
     // Execute the query and render the template with the results
     db.pool.query(queryEmployeeSelect, function(error, rows, fields) {
         if (error) {
             // Handle the error
-            console.error(error);
+            console.error("Error fetching employees with customer type:", error);
             res.sendStatus(500); // Internal Server Error
         } else {
             // Render the 'employees' template with the data retrieved from the database
             res.render('employees', { data: rows });
         }
     });
-}); 
+});
+
 
 // show transaction
 app.get('/transactions', function(req, res) {
@@ -323,22 +334,30 @@ app.post('/add-customer', function(req, res) {
 // add employees
 app.post('/add-employee', function(req, res) {
     let data = req.body;
-    let customerID = data['employeeCustomerID'] ? parseInt(data['employeeCustomerID'], 10) : null;
-    // Parameterized query to prevent SQL injection
-    let queryEmployeesInsert = `INSERT INTO Employees (firstName, lastName, email, position, customerID) VALUES (?, ?, ?, ?, ?);`;
-    let queryParams = [data['employeeFirstName'], data['employeeLastName'], data['employeeEmail'], data['employeePosition'], customerID];
-    
-    db.pool.query(queryEmployeesInsert, queryParams, function(error, results, fields) {
-        if (error) {
-            // Send 400 Bad Request if there is an error
-            console.error(error);
-            res.status(400).send('Error adding new employee');
-        } else {
-            // If there is no error, redirect to the employees page to show the updated list
-            res.redirect('/employees');
+    let customerType = data['employeeCustomerType'];
+
+    db.pool.query('SELECT customerID FROM Customers WHERE customerType = ?', [customerType], function(findError, findResults) {
+        if (findError || findResults.length === 0) {
+            console.error("Error finding customerID:", findError);
+            return res.status(400).send('Customer type not found');
         }
+
+        let customerID = findResults[0].customerID;
+
+        let queryEmployeesInsert = `INSERT INTO Employees (firstName, lastName, email, position, customerID) VALUES (?, ?, ?, ?, ?);`;
+        let queryParams = [data['employeeFirstName'], data['employeeLastName'], data['employeeEmail'], data['employeePosition'], customerID];
+        
+        db.pool.query(queryEmployeesInsert, queryParams, function(error, results, fields) {
+            if (error) {
+                console.error(error);
+                res.status(400).send('Error adding new employee');
+            } else {
+                res.redirect('/employees');
+            }
+        });
     });
 });
+
 
 // add transactions
 app.post('/add-transaction', function(req, res) {
@@ -563,46 +582,40 @@ app.post('/update-customer', function(req, res) {
     });
 });
 
-
 // update employee
 app.post('/update-employee', function(req, res) {
     let data = req.body;
+    let employeeID = parseInt(data['updateEmployeeID'], 10);
 
-    let employeeID = parseInt(data['updateEmployeeID'], 10);  
-    let customerID = data['updateEmployeeCustomerID'] ? parseInt(data['updateEmployeeCustomerID'], 10) : null;
-
-    // Check if employeeID is not a number (NaN), which would indicate a parsing error
     if (isNaN(employeeID)) {
         return res.status(400).send('Invalid employee ID');
     }
-    
-    // customerID can be null if the input is empty, which is fine if the field is optional
-    if (data['updateEmployeeCustomerID'] !== '' && isNaN(customerID)) {
-        return res.status(400).send('Invalid customer ID');
-    }
 
-    let queryUpdateEmployees = `UPDATE Employees SET firstName = ?, lastName = ?, email = ?, position = ?, customerID = ? WHERE employeeID = ?;`;
-    let queryParams = [
-        data['updateEmployeeFirstName'],  
-        data['updateEmployeeLastName'],  
-        data['updateEmployeeEmail'],      
-        data['updateEmployeePosition'],  
-        customerID,
-        employeeID
-    ];
+    // Update employee details first
+    let queryUpdateEmployee = `UPDATE Employees SET firstName = ?, lastName = ?, email = ?, position = ? WHERE employeeID = ?;`;
+    let employeeParams = [data['updateEmployeeFirstName'], data['updateEmployeeLastName'], data['updateEmployeeEmail'], data['updateEmployeePosition'], employeeID];
 
-    // Log queryParams to check their values before the query
-    console.log(queryParams);
-
-    db.pool.query(queryUpdateEmployees, queryParams, function(error, results, fields) {
-        if (error) {
-            console.error('Database error:', error);
-            res.status(400).send('Error updating employee information');
-        } else {
-            res.redirect('/employees');
+    db.pool.query(queryUpdateEmployee, employeeParams, function(employeeError, employeeResults) {
+        if (employeeError) {
+            console.error('Error updating employee:', employeeError);
+            return res.status(400).send('Error updating employee information');
         }
+
+        // Then update customer type based on the associated customerID
+        let queryUpdateCustomerType = `UPDATE Customers SET customerType = ? WHERE customerID = (SELECT customerID FROM Employees WHERE employeeID = ?);`;
+        let customerParams = [data['updateEmployeeCustomerType'], employeeID];
+
+        db.pool.query(queryUpdateCustomerType, customerParams, function(customerError, customerResults) {
+            if (customerError) {
+                console.error('Error updating customer type:', customerError);
+                return res.status(400).send('Error updating customer type');
+            }
+
+            res.redirect('/employees');
+        });
     });
 });
+
 
 // update transaction
 app.post('/update-transaction', function(req, res) {

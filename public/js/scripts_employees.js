@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById("updateEmployeeLastName").value = rowToUpdate.getAttribute("data-last-name")
         document.getElementById("updateEmployeeEmail").value = rowToUpdate.getAttribute("data-email") 
         document.getElementById("updateEmployeePosition").value = rowToUpdate.getAttribute("data-position") 
-        document.getElementById("updateEmployeeCustomerID").value = rowToUpdate.getAttribute("data-customerID") 
+        document.getElementById("updateEmployeeCustomerType").value = rowToUpdate.getAttribute("data-customer-type") 
         updateEmployeeForm.style.display = 'block';
       });
     });
