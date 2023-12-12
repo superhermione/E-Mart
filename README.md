@@ -26,13 +26,13 @@ ExpressMart is a grocery store with an annual revenue of $1.5 million and employ
 ## Nevigation
 
 * **Homepage walkthrough** - visually presents the six functional pages that users can interact with our ExpressMart database. 
-<img src='./assets/homepage.gif'/>
+<img src='./assets/homepage.gif' height="600"/>
 
 * **Products page walkthrough** - users are able to conduct CRUD (create, read, update and delete) operations with this page. All data are altered in Maria Database simultaneously. 
-<img src='./assets/products.gif'/>
+<img src='./assets/products.gif' height="600"/>
 
 * **Categories page walkthrough** - users are able to conduct CRUD (create, read, update and delete) operations with the categories table. All data are altered in Maria Database simultaneously. 
-<img src='./assets/categories.gif'/>
+<img src='./assets/categories.gif' height="600"/>
 
 * **Customers page walkthrough** - users are able to conduct CRUD (create, read, update and delete) operations with the customers table. All data are altered in Maria Database simultaneously. 
-<img src='./assets/customers.gif'/>
+<img src='./assets/customers.gif' height="600"/>
