@@ -4,8 +4,8 @@ The project involves the development of a web-based user interface (UI) designed
  
 ## Authors
  
-- [Su Youn Jeon](https://github.com/tndus604)
 - [Xinrui Hou](https://github.com/superhermione)
+- [Su Youn Jeon]
  
 ## Table of Contents
 1. [Overview](#overview)
